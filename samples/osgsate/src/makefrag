@@ -1,0 +1,5 @@
+# add required libraries for OpenSceneGraph and osgEarth
+
+OMNETPP_LIBS += $(OSG_LIBS) -losgDB -losgText
+OMNETPP_LIBS += $(OSGEARTH_LIBS) -losgEarthSymbology -losgEarthAnnotation
+

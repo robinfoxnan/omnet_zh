@@ -1,0 +1,3 @@
+package osgsate;
+
+@license(LGPL);
