@@ -1,0 +1,31 @@
+{
+
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug_satellite",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\bin\\tictoc_dbg.exe",
+            "args": ["-f", "${workspaceFolder}\\samples\\tictoc\\omnetpp.ini",
+                     "-c", "Tictoc1",
+                     "-u", "Qtenv",
+                     "-n", "${workspaceFolder}\\samples\\tictoc"
+                    ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\omnetpp562\\tools\\win64\\mingw64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+            
+        }
+    ]
+}
