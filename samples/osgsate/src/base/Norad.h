@@ -25,6 +25,8 @@
 #include "libnorad/cJulian.h"
 #include "libnorad/ccoord.h"
 #include "libnorad/cOrbit.h"
+#include "libnorad/cSite.h"
+#include "libnorad/ccoord.h"
 
 class cTle;
 //class cOrbit;
@@ -108,6 +110,7 @@ public:
     double getSemiMajor() {return this->orbit->SemiMajor(); };
 
     std::string getName1() {return this->line3;};
+    cEci & getEci();
 
 protected:
     virtual void handleMessage(cMessage* msg);

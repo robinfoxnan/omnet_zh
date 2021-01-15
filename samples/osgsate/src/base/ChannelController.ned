@@ -16,8 +16,18 @@ package osgsate.src.base;
 simple ChannelController
 {
     @display("i=block/network2");
-    string satToSatColor = default("#00FF00BF");
+    // 轨道内链路设置为绿色
+    string satToSatColor = default("#00FF00BF");  
     double satToSatWidth = default(2);
+    
+    // 轨道间链路设置为紫色
+    string satToSatColor1 = default("AA00AABF");
+    double satToSatWidth1 = default(2);
+    
+    // 和地面站间颜色设置为橘色
     string satToGroundColor = default("#FFBF00BF");
     double satToGroundWidth = default(2);
+    
+    double lookAngleMin = default(30);
+
 }

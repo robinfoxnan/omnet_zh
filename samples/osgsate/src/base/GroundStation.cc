@@ -45,6 +45,9 @@ void GroundStation::initialize(int stage)
         labelColor = par("labelColor").stringValue();
         longitude = par("longitude");
         latitude = par("latitude");
+        double alt = 0.1;   // 默认的海拔
+
+        siteEquator = cSite(latitude, longitude, alt);   // 用来计算方位
 
         // 计算背景大小
         //cCanvas *canvas = getParentModule()->getCanvas();
@@ -103,6 +106,19 @@ void GroundStation::initialize(int stage)
         break;
     }
 }
+
+// 计算仰角
+double GroundStation::getLookAngle(const cEci& eciSDP4)
+{
+    cCoordTopo topoLook = siteEquator.getLookAngle(eciSDP4);
+    const double DEG_PER_RAD = 180.0 / PI;
+    double angle = topoLook.m_El * DEG_PER_RAD;
+
+    std::cout << "仰角：" << angle << std::endl;
+    return angle;
+}
+
+
 
 void GroundStation::refreshVisuals()
 {

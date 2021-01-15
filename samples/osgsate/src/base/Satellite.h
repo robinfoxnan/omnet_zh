@@ -95,6 +95,9 @@ class Satellite : public cSimpleModule
     Norad norad;
     simtime_t nextChange;
 
+    int numStationInsight = 0; // 仰角合适的时候，能与几个基站通信
+    double angle = 0;
+
   public:
     static TleFile tlefile;
     static bool getInfo(int index, std::string & line0, std::string & line1, std::string & line2);
@@ -116,7 +119,11 @@ class Satellite : public cSimpleModule
 
     osg::Vec3d getPositionAtTime(simtime_t& targetTime);
 
-
+    // 计算仰角和方位时候需要提供位置信息
+    cEci  & getPositionSdp4();
+    int setStationInsight(int i);
+    void setAngle(double n);
+    int getNumStationInsight();
   protected:
     // angular velocity in rad/sec
     // 圆形的平均角速度为2pi / T ，这里的Gm 是直接计算好的Gm

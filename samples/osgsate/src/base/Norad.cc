@@ -105,6 +105,10 @@ double Norad::getAltitude()
     return geoCoord.m_Alt;
 }
 
+cEci & Norad::getEci()
+{
+    return eci;
+}
 // 计算到站点的仰角
 double Norad::getElevation(const double& refLatitude, const double& refLongitude, const double& refAltitude)
 {

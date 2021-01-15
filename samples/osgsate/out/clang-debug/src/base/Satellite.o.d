@@ -6,7 +6,8 @@
   D:/omnetpp562/samples/osgsate/src\libnorad/cVector.h \
   D:/omnetpp562/samples/osgsate/src\libnorad/cJulian.h \
   D:/omnetpp562/samples/osgsate/src\libnorad/cOrbit.h \
-  D:/omnetpp562/samples/osgsate/src\libnorad/cTLE.h base/TleFile.h \
+  D:/omnetpp562/samples/osgsate/src\libnorad/cTLE.h \
+  D:/omnetpp562/samples/osgsate/src\libnorad/cSite.h base/TleFile.h \
   base/ChannelController.h base/GroundStation.h \
   D:/omnetpp562/include\omnetpp/osgutil.h base/util.h
 
@@ -31,6 +32,8 @@ D:/omnetpp562/samples/osgsate/src\libnorad/cJulian.h:
 D:/omnetpp562/samples/osgsate/src\libnorad/cOrbit.h:
 
 D:/omnetpp562/samples/osgsate/src\libnorad/cTLE.h:
+
+D:/omnetpp562/samples/osgsate/src\libnorad/cSite.h:
 
 base/TleFile.h:
 

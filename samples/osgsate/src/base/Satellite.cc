@@ -451,6 +451,26 @@ void Satellite::initialize(int stage)
 }
 
 
+// 计算仰角和方位时候需要提供位置信息
+cEci & Satellite::getPositionSdp4()
+{
+    return norad.getEci();
+}
+
+int Satellite::setStationInsight(int i)
+{
+    this->numStationInsight = i;
+    return 1;
+}
+void Satellite::setAngle(double n)
+{
+    this->angle = n;
+}
+int Satellite::getNumStationInsight()
+{
+    return this->numStationInsight;
+}
+
 // 未来某个时间设置后，得到当前的位置信息
 osg::Vec3d Satellite::getPositionAtTime(simtime_t& targetTime)
 {
@@ -544,6 +564,8 @@ void Satellite::updatePosition()
     // 三维空间设置开机关机代码
     if (isStatusChanged)
     {
+        labelNode->setDynamic(true);
+
         if (isWorking == false)
         {
             str = label + " 宕机";
@@ -555,7 +577,7 @@ void Satellite::updatePosition()
             labelNode->setStyle(labelStyle);
 
         }
-        labelNode->setDynamic(true);
+
         labelNode->setText(str.c_str());
 
 
@@ -571,7 +593,7 @@ void Satellite::updatePosition()
     platy = height / 2 - latitude / 180.0 * height;
 
     tooltip = "";
-    std_string_format(tooltip, "经度：%lf, 纬度：%lf", longitude, latitude);
+    std_string_format(tooltip, "经度：%lf, 纬度：%lf, 仰角：%lf", longitude, latitude, angle);
 
     if (orbitTail != NULL) {
            // 拖尾中第一个点
@@ -608,6 +630,37 @@ void Satellite::refreshDisplay() const
     getDisplayString().setTagArg("p", 1, platy);
 
     getDisplayString().setTagArg("tt", 0, tooltip.c_str());
+    if (orbitId == "M1")
+    {
+        getDisplayString().setTagArg("t", 2, "#ff9406");
+    }
+    else if (orbitId == "M2")
+    {
+        getDisplayString().setTagArg("t", 2, "#03ee00");
+    }
+    else
+    {
+        getDisplayString().setTagArg("t", 2, "#2200cd");
+    }
+
+    if (this->numStationInsight > 0)
+    {
+        //getDisplayString().setTagArg("i2", 0, "device/card_vs");
+        if (orbitId == "M1")
+            getDisplayString().setTagArg("b", 4, "#ff9406");
+        else if (orbitId == "M2")
+            getDisplayString().setTagArg("b", 4, "#03ee00");
+        else
+            getDisplayString().setTagArg("b", 4, "#2200cd");
+
+        getDisplayString().setTagArg("b", 5, 2);
+    }
+    else
+    {
+        getDisplayString().removeTag("b");
+        //getDisplayString().setTagArg("b", 4, "#000000");
+        //getDisplayString().setTagArg("b", 5, (int)0);
+    }
 }
 
 #endif // WITH_OSG

@@ -100,8 +100,14 @@ void ChannelController::initialize(int stage)
     case 0:
         satToSatColor = par("satToSatColor").stringValue();
         satToSatWidth = par("satToSatWidth").doubleValue();
+
         satToGroundColor = par("satToGroundColor").stringValue();
         satToGroundWidth = par("satToGroundWidth").doubleValue();
+
+        satToSatColor1 = par("satToSatColor1").stringValue();
+        satToSatWidth1 = par("satToSatWidth1").doubleValue();
+
+        lookAngleMin = par("lookAngleMin").doubleValue();
         break;
     case 1:
         scene = OsgEarthScene::getInstance()->getScene()->asGroup();
@@ -112,40 +118,44 @@ void ChannelController::initialize(int stage)
         // note: satellites and ground stations must have been added by now
         for (int i = 0; i < (int)satellites.size(); ++i)
         {
-            //if (satellites[i]->isWorking == false)
-           //     continue;
-
+            // 先都添加一个线
             for (int j = 0; j < (int)stations.size(); ++j)
             {
-                addLineOfSight(satellites[i]->getLocatorNode(), stations[j]->getLocatorNode(), 0, i, -1);
+                addLineOfSight(satellites[i]->getLocatorNode(), stations[j]->getLocatorNode(), 0, i, -(j+1));
+
             }
 
-            for (int j = i+1; j < (int)satellites.size(); ++j)
+
+            for (int j = i; j < (int)satellites.size(); ++j)
             {
+                // 按照相邻的原则添加, 不同轨，同编号
+                int n = i % 8;
+                int m = j % 8;
+
                 // 同轨道号比较
                 if (satellites[i]->getOrbitId() == satellites[j]->getOrbitId())
                 {
+                    // 这段是按照可视角度计算
                     /*
-                    int ki = (int)satellites[i]->getStartingPhase();
-
-                    int kj = (int)satellites[j]->getStartingPhase();
-
-
-                    // kj 跨越360 加80 追上ki
-                    int delta2 = std::abs( ((kj + 80) % 360 ) - ki);
-
-                    // kj 比ki大80度
-                    int delta1 = std::abs(ki + 80  - kj);
-
-                    if ((delta1 < 3) || (delta2 < 3))
-                        addLineOfSight(satellites[i]->getLocatorNode(), satellites[j]->getLocatorNode(), 1);
-                        */
-                    //bool isWorking = satellites[i]->isWorking && satellites[j]->isWorking;   // 是否在工作
                     bool ret = isInAngleSight(satellites[i]->getPos(), satellites[j]->getPos());
                     if (ret)
                         addLineOfSight(satellites[i]->getLocatorNode(), satellites[j]->getLocatorNode(), 1, i, j);
+                        */
+
+
+                    if ( ((n + 1) == m ) || ((n == 0) && (m == 7))  )
+                    {
+                        addLineOfSight(satellites[i]->getLocatorNode(), satellites[j]->getLocatorNode(), 1, i, j);
+                    }
                 }
-            }
+                else  // 不同轨道
+                {
+                    if (m == n)
+                     {
+                         addLineOfSight(satellites[i]->getLocatorNode(), satellites[j]->getLocatorNode(), 2, i, j);
+                     }
+                }
+             }
         }
         break;
     }
@@ -166,6 +176,7 @@ void ChannelController::addGroundStation(GroundStation *p)
     stations.push_back(p);
 }
 
+// num1和num2是卫星编号，如果是地面站，则设置num2为负数，-1, -2
 void ChannelController::addLineOfSight(osg::Node *a, osg::Node *b, int type, int num1, int num2)
 {
     auto mapNode = osgEarth::MapNode::findMapNode(scene);
@@ -236,17 +247,48 @@ void ChannelController::refreshDisplay() const
                 isworking =  isworking && satellites[num2]->isWorking;
             }
 
+            if (num2 < 0)
+            {
+                num2 = -num2;
+                num2 -= 1;
+            }
+
             switch (type) {
             case 0:
                 ++numSatToGround;
                 if (!satToGroundColor.empty() && isworking)
-                    connections->addDrawable(createLineBetweenPoints(start, end, satToGroundWidth, osgEarth::Color(satToGroundColor)));
+                {
+                    cEci &eci = satellites[num1]->getPositionSdp4();
+                    double angle = stations[num2]->getLookAngle(eci);
+                    satellites[num1]->setAngle(angle);
+
+                    if (angle > lookAngleMin)   // 认为30度以上的仰角才能通信
+                    {
+                        satellites[num1]->setStationInsight(1);
+
+                        connections->addDrawable(createLineBetweenPoints(start, end, satToGroundWidth, osgEarth::Color(satToGroundColor)));
+                    }
+                    else
+                    {
+                        satellites[num1]->setStationInsight(0);
+                    }
+
+                }
                 break;
             case 1:
                 ++numSatToSat;
                 if (!satToSatColor.empty() && isworking)
+                {
                     connections->addDrawable(createLineBetweenPoints(start, end, satToSatWidth, osgEarth::Color(satToSatColor)));
+                }
                 break;
+            case 2:
+                ++numSatToSat;
+                if (!satToSatColor.empty() && isworking)
+                {
+                    connections->addDrawable(createLineBetweenPoints(start, end, satToSatWidth, osgEarth::Color(satToSatColor1)));
+                }
+
             }
         }
     }

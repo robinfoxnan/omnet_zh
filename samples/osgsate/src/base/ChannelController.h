@@ -46,10 +46,15 @@ class ChannelController : public cSimpleModule
 
     osg::ref_ptr<osg::Geode> connections = nullptr;
     // visual parameters of the connections
-    std::string satToSatColor;
+    std::string satToSatColor;      // 同轨道颜色
     double satToSatWidth = 0;
     std::string satToGroundColor;
     double satToGroundWidth = 0;
+
+    std::string satToSatColor1;    // 不通轨道颜色
+    double satToSatWidth1 = 0;
+
+    double lookAngleMin = 0;        // 最小仰角
 
     // the node containing the osgEarth data
     osg::Group *scene = nullptr;

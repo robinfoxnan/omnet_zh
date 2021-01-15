@@ -17,6 +17,7 @@
 #include <osgEarth/GeoTransform>
 #include <osgEarthAnnotation/CircleNode>
 #include <osgEarthAnnotation/FeatureNode>
+#include "Norad.h"
 
 using namespace omnetpp;
 
@@ -36,12 +37,16 @@ class GroundStation : public cSimpleModule
     std::string modelURL;
     double modelScale;
 
+
+
     // the node containing the osgEarth data
     osg::observer_ptr<osgEarth::MapNode> mapNode = nullptr;
     // osgEarth node for 3D visualization
     osgEarth::GeoTransform *geoTransform = nullptr;
 
     double longitude = -70, latitude = 40, altitude = 400;
+
+    cSite siteEquator = cSite(39.99, 116.1, 0.1);
 
     int width = 1080;
     int height = 1080;
@@ -50,6 +55,8 @@ class GroundStation : public cSimpleModule
 
     osg::Vec3d getPosition() { return osg::Vec3d(longitude, latitude, altitude); }
     osg::Node *getLocatorNode() { return geoTransform; };
+
+    double getLookAngle(const cEci& eciSDP4);
 
   protected:
     virtual void initialize(int stage) override;
